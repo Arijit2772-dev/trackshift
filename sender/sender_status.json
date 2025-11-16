@@ -1,0 +1,12 @@
+{
+  "role": "sender",
+  "state": "idle",
+  "current_file": "Ready",
+  "current_index": 0,
+  "total_files": 0,
+  "bytes_sent_current_file": 0,
+  "current_file_size": 0,
+  "files_sent": 0,
+  "error_message": null,
+  "last_update": "2025-11-16T11:23:11"
+}

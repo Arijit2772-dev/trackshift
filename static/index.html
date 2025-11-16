@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SFTS Monitor</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 20px;
+    }
+    h1 { margin-bottom: 10px; }
+    .card {
+      background: #111827;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .title {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .label {
+      color: #9ca3af;
+      font-size: 13px;
+    }
+    .value {
+      font-weight: 600;
+      margin-left: 4px;
+    }
+    .row { margin-bottom: 4px; }
+    .progress-container {
+      background: #1f2937;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 10px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #3b82f6;
+      transition: width 0.3s ease;
+    }
+    .error {
+      color: #fca5a5;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Smart File Transfer – Live Monitor</h1>
+
+  <div class="card" id="sender-card">
+    <div class="title">Sender</div>
+    <div class="row"><span class="label">State:</span><span class="value" id="sender-state">-</span></div>
+    <div class="row"><span class="label">Current file:</span><span class="value" id="sender-file">-</span></div>
+    <div class="row"><span class="label">File progress:</span><span class="value" id="sender-file-pct">0%</span></div>
+    <div class="progress-container">
+      <div class="progress-bar" id="sender-file-bar"></div>
+    </div>
+    <div class="row"><span class="label">Files:</span><span class="value" id="sender-files">0 / 0</span></div>
+    <div class="row error" id="sender-error"></div>
+  </div>
+
+  <div class="card" id="receiver-card">
+    <div class="title">Receiver</div>
+    <div class="row"><span class="label">State:</span><span class="value" id="receiver-state">-</span></div>
+    <div class="row"><span class="label">Last file:</span><span class="value" id="receiver-file">-</span></div>
+    <div class="row"><span class="label">File progress:</span><span class="value" id="receiver-file-pct">0%</span></div>
+    <div class="progress-container">
+      <div class="progress-bar" id="receiver-file-bar"></div>
+    </div>
+    <div class="row"><span class="label">Files:</span><span class="value" id="receiver-files">0 / 0</span></div>
+    <div class="row error" id="receiver-error"></div>
+  </div>
+
+  <script>
+    async function fetchStatus(url) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(res.statusText);
+        return await res.json();
+      } catch (e) {
+        return { error: e.message };
+      }
+    }
+
+    function updateCard(prefix, data) {
+      const stateEl = document.getElementById(prefix + "-state");
+      const fileEl = document.getElementById(prefix + "-file");
+      const filePctEl = document.getElementById(prefix + "-file-pct");
+      const fileBarEl = document.getElementById(prefix + "-file-bar");
+      const filesEl = document.getElementById(prefix + "-files");
+      const errorEl = document.getElementById(prefix + "-error");
+
+      if (!data || data.error) {
+        stateEl.textContent = "no data";
+        fileEl.textContent = "-";
+        filePctEl.textContent = "0%";
+        fileBarEl.style.width = "0%";
+        filesEl.textContent = "0 / 0";
+        errorEl.textContent = data && data.error ? data.error : "";
+        return;
+      }
+
+      const bytesCurrent = data.bytes_sent_current_file || data.bytes_received_current_file || 0;
+      const sizeCurrent = data.current_file_size || 0;
+      const pct = sizeCurrent > 0 ? Math.round((bytesCurrent / sizeCurrent) * 100) : 0;
+
+      stateEl.textContent = data.state || "-";
+      fileEl.textContent = data.current_file || data.last_file || "-";
+      filePctEl.textContent = pct + "%";
+      fileBarEl.style.width = pct + "%";
+
+      const filesCompleted = data.files_sent || data.files_received || 0;
+      const totalFiles = data.total_files || data.expected_files || 0;
+      filesEl.textContent = filesCompleted + " / " + totalFiles;
+
+      errorEl.textContent = data.error_message || "";
+    }
+
+    async function refresh() {
+      const sender = await fetchStatus("/sender-status");
+      const receiver = await fetchStatus("/receiver-status");
+      updateCard("sender", sender);
+      updateCard("receiver", receiver);
+    }
+
+    setInterval(refresh, 1000);
+    refresh();
+  </script>
+</body>
+</html>

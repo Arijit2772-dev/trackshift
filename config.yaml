@@ -1,0 +1,86 @@
+# Smart File Transfer System Configuration
+# Edit this file to customize system behavior
+
+# Network settings
+network:
+  # Host for receiver (0.0.0.0 = all interfaces)
+  receiver_host: "0.0.0.0"
+  # Port for communication
+  port: 5001
+  # Connection timeout in seconds (0 = no timeout)
+  timeout: 30
+  # Socket buffer size in bytes
+  buffer_size: 4096
+
+# Transfer settings
+transfer:
+  # Chunk size in MB for splitting files
+  chunk_size_mb: 1
+  # Maximum retry attempts per file
+  max_retries: 3
+  # Enable resume capability
+  enable_resume: true
+  # Transfer state file location
+  state_file: "transfer_state.json"
+
+# Compression settings
+compression:
+  # Compression level (0-9, where 9 is maximum compression)
+  # Higher = slower but smaller files
+  level: 6
+  # Enable compression
+  enabled: true
+
+# Security settings
+security:
+  # Path to encryption key file
+  key_file: "secret.key"
+  # Enable encryption
+  enabled: true
+
+# Logging settings
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "INFO"
+  # Log file location (null = console only)
+  file: "sfts.log"
+  # Maximum log file size in MB (before rotation)
+  max_size_mb: 10
+  # Number of backup log files to keep
+  backup_count: 3
+  # Log format
+  format: "%(asctime)s [%(levelname)s] %(name)s - %(message)s"
+
+# Priority settings
+priority:
+  # Enable priority-based transfer
+  enabled: true
+  # Priority levels (1=highest, 4=lowest)
+  # Default priority if not specified
+  default: 3
+  # Priority level names for reference
+  levels:
+    1: "CRITICAL"
+    2: "HIGH"
+    3: "NORMAL"
+    4: "LOW"
+
+# Performance settings
+performance:
+  # Enable parallel chunk transmission (future feature)
+  parallel_transfers: false
+  # Number of parallel workers (if enabled)
+  max_workers: 4
+  # Enable bandwidth throttling
+  throttle_enabled: false
+  # Maximum bandwidth in MB/s (0 = unlimited)
+  max_bandwidth_mbps: 0
+
+# Monitoring settings
+monitoring:
+  # Enable real-time progress display
+  show_progress: true
+  # Update interval for progress bar (seconds)
+  progress_update_interval: 0.1
+  # Enable detailed statistics
+  show_statistics: true

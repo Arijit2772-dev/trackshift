@@ -1,0 +1,11 @@
+# Smart File Transfer System - Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core encryption library
+cryptography>=41.0.0
+
+# Configuration file parsing
+PyYAML>=6.0
+
+# Web monitoring dashboard
+flask>=2.3.0

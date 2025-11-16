@@ -1,0 +1,11 @@
+{
+  "role": "receiver",
+  "state": "waiting",
+  "last_file": "Ready",
+  "files_received": 0,
+  "expected_files": 0,
+  "bytes_received_current_file": 0,
+  "current_file_size": 0,
+  "error_message": null,
+  "last_update": "2025-11-16T11:23:11"
+}
